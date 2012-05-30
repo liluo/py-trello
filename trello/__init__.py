@@ -236,6 +236,7 @@ class Board(object):
             c.list_id = obj['idList']
             c.labels  = obj['labels']
             c.closed  = obj['closed']
+            c.member_ids = obj['idMembers']
             cards.append(c)
 
         return cards
