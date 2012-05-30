@@ -152,14 +152,32 @@ class Board(object):
 
     def fetch(self):
         """Fetch all attributes for this board"""
-        json_obj         = self.client.fetch_json('/boards/'+self.id)
-        self.name        = json_obj['name']
-        self.desc        = json_obj['desc']
-        self.closed      = json_obj['closed']
-        self.url         = json_obj['url']
+        json_obj    = self.client.fetch_json('/boards/'+self.id)
+        self.name   = json_obj['name']
+        self.desc   = json_obj['desc']
+        self.closed = json_obj['closed']
+        self.url    = json_obj['url']
 
     def save(self):
         pass
+
+    def all_members(self):
+        json_obj    = self.client.fetch_json(
+                          '/boards/'+self.id+'/members',
+                          query_params = {'fields': 'all'})
+        members = []
+        for obj in json_obj:
+            print obj
+            member = Member(self, obj['id'])
+            member.url = obj['url']
+            member.status = obj['status']
+            member.username = obj['username']
+            member.full_name = obj['fullName']
+            member.board_ids = obj['idBoards']
+            member.initials = obj['initials']
+            member.avatar_hash = obj['avatarHash']
+            members.append(member)
+        return members
         
     def all_lists(self):
         """Returns all lists on this board"""
@@ -325,3 +343,22 @@ class Card(object):
         self.fetch_actions()
         date_str = self.actions[0]['date'][:-5]
         return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S')
+
+class Member(object):
+    """ 
+    Class representing a Trello member. Member attributes are stored on 
+    the object
+    """
+
+    def __init__(self, trello_list, member_id):
+        """Constructor
+
+        :trello_list: reference to the parent board or list or card
+        :member_id: ID for this member
+        """
+        self.trello_list = trello_list
+        self.client      = trello_list.client
+        self.id          = member_id
+
+    def __repr__(self):
+        return '<Member>'
