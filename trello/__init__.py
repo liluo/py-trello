@@ -102,7 +102,7 @@ class TrelloClient(object):
         boards = list()
         for obj in json_obj:
             board             = Board(self, obj['id'], name=obj['name'].encode('utf-8'))
-            board.description = obj['desc']
+            board.desc        = obj['desc']
             board.closed      = obj['closed']
             board.url         = obj['url']
             boards.append(board)
@@ -153,7 +153,7 @@ class Board(object):
         """Fetch all attributes for this board"""
         json_obj         = self.client.fetch_json('/boards/'+self.id)
         self.name        = json_obj['name'].encode('utf-8')
-        self.description = json_obj['desc']
+        self.desc        = json_obj['desc']
         self.closed      = json_obj['closed']
         self.url         = json_obj['url']
 
@@ -204,7 +204,12 @@ class Board(object):
                        query_params = {'filter': card_filter})
         cards = list()
         for obj in json_obj:
-            c = Card(self, obj['id'], name=obj['name'].encode('utf-8'))
+            c = Card(self, obj['id'], 
+                     name=obj['name'].encode('utf-8'),
+                     desc=obj['desc'],
+                     url=obj['url'],
+                     closed=obj['closed'],
+                     list_id=obj['idList'])
             c.closed = obj['closed']
             cards.append(c)
 
@@ -240,7 +245,7 @@ class List(object):
         cards = list()
         for c in json_obj:
             card             = Card(self, c['id'], name=c['name'].encode('utf-8'))
-            card.description = c['desc']
+            card.desc        = c['desc']
             card.closed      = c['closed']
             card.url         = c['url']
             cards.append(card)
@@ -260,7 +265,7 @@ class List(object):
 
         card             = Card(self, json_obj['id'])
         card.name        = json_obj['name'].encode('utf-8')
-        card.description = json_obj['desc']
+        card.desc        = json_obj['desc']
         card.closed      = json_obj['closed']
         card.url         = json_obj['url']
         return card
@@ -271,7 +276,7 @@ class Card(object):
     the object
     """
 
-    def __init__(self, trello_list, card_id, name=''):
+    def __init__(self, trello_list, card_id, name='', desc='', url='', closed=False, list_id=''):
         """Constructor
 
         :trello_list: reference to the parent list
@@ -281,6 +286,10 @@ class Card(object):
         self.client      = trello_list.client
         self.id          = card_id
         self.name        = name
+        self.desc        = desc
+        self.list_id     = list_id
+        self.url         = url
+        self.closed      = closed
 
     def __repr__(self):
         return '<Card %s>' % self.name
@@ -292,7 +301,7 @@ class Card(object):
                        query_params = {'badges': False})
 
         self.name        = json_obj['name'].encode('utf-8')
-        self.description = json_obj['desc']
+        self.desc        = json_obj['desc']
         self.closed      = json_obj['closed']
         self.url         = json_obj['url']
         self.member_ids  = json_obj['idMembers']
