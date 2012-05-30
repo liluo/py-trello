@@ -102,10 +102,11 @@ class TrelloClient(object):
         json_obj = self.fetch_json('/members/me/boards/all')
         boards = list()
         for obj in json_obj:
-            board             = Board(self, obj['id'], name=obj['name'])
-            board.desc        = obj['desc']
-            board.closed      = obj['closed']
-            board.url         = obj['url']
+            board        = Board(self, obj['id'])
+            board.name   = obj['name']
+            board.desc   = obj['desc']
+            board.closed = obj['closed']
+            board.url    = obj['url']
             boards.append(board)
 
         return boards
@@ -137,7 +138,7 @@ class Board(object):
     access to all sub-objects, however, is always an API call (Lists, Cards).
     """
 
-    def __init__(self, client, board_id, name=''):
+    def __init__(self, client, board_id):
         """Constructor.
         
         :trello: Reference to a Trello object
@@ -145,7 +146,6 @@ class Board(object):
         """
         self.client = client
         self.id     = board_id
-        self.name   = name
 
     def __repr__(self):
         return '<Board>'
@@ -180,7 +180,8 @@ class Board(object):
                        query_params = {'cards': 'none', 'filter': list_filter})
         lists = list()
         for obj in json_obj:
-            l = List(self, obj['id'], name=obj['name'])
+            l = List(self, obj['id'])
+            l.name   = obj['name']
             l.closed = obj['closed']
             lists.append(l)
 
@@ -205,13 +206,13 @@ class Board(object):
                        query_params = {'filter': card_filter})
         cards = list()
         for obj in json_obj:
-            c = Card(self, obj['id'], 
-                     name=obj['name'],
-                     desc=obj['desc'],
-                     url=obj['url'],
-                     closed=obj['closed'],
-                     list_id=obj['idList'])
-            c.closed = obj['closed']
+            c         = Card(self, obj['id'])
+            c.name    = obj['name']
+            c.desc    = obj['desc']
+            c.url     = obj['url']
+            c.closed  = obj['closed']
+            c.list_id = obj['idList']
+            c.closed  = obj['closed']
             cards.append(c)
 
         return cards
@@ -220,7 +221,7 @@ class List(object):
     """Class representing a Trello list. List attributes are stored on the object, but access to 
     sub-objects (Cards) require an API call"""
 
-    def __init__(self, board, list_id, name=''):
+    def __init__(self, board, list_id):
         """Constructor
 
         :board: reference to the parent board
@@ -229,7 +230,6 @@ class List(object):
         self.board  = board
         self.client = board.client
         self.id     = list_id
-        self.name   = name
 
     def __repr__(self):
         return '<List>'
@@ -245,10 +245,11 @@ class List(object):
         json_obj = self.client.fetch_json('/lists/'+self.id+'/cards')
         cards = list()
         for c in json_obj:
-            card             = Card(self, c['id'], name=c['name'])
-            card.desc        = c['desc']
-            card.closed      = c['closed']
-            card.url         = c['url']
+            card        = Card(self, c['id'])
+            card.name   = c['name']
+            card.desc   = c['desc']
+            card.url    = c['url']
+            card.closed = c['closed']
             cards.append(card)
         return cards
 
@@ -277,7 +278,7 @@ class Card(object):
     the object
     """
 
-    def __init__(self, trello_list, card_id, name='', desc='', url='', closed=False, list_id=''):
+    def __init__(self, trello_list, card_id):
         """Constructor
 
         :trello_list: reference to the parent list
@@ -286,11 +287,6 @@ class Card(object):
         self.trello_list = trello_list
         self.client      = trello_list.client
         self.id          = card_id
-        self.name        = name
-        self.desc        = desc
-        self.list_id     = list_id
-        self.url         = url
-        self.closed      = closed
 
     def __repr__(self):
         return '<Card>'
