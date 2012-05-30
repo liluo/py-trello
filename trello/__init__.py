@@ -212,6 +212,7 @@ class Board(object):
             c.url     = obj['url']
             c.closed  = obj['closed']
             c.list_id = obj['idList']
+            c.labels  = obj['labels']
             c.closed  = obj['closed']
             cards.append(c)
 
@@ -249,6 +250,7 @@ class List(object):
             card.name   = c['name']
             card.desc   = c['desc']
             card.url    = c['url']
+            card.labels = c['labels']
             card.closed = c['closed']
             cards.append(card)
         return cards
