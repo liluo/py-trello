@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from httplib2 import Http
 from urllib import urlencode
 from datetime import datetime
@@ -101,7 +102,7 @@ class TrelloClient(object):
         json_obj = self.fetch_json('/members/me/boards/all')
         boards = list()
         for obj in json_obj:
-            board             = Board(self, obj['id'], name=obj['name'].encode('utf-8'))
+            board             = Board(self, obj['id'], name=obj['name'])
             board.desc        = obj['desc']
             board.closed      = obj['closed']
             board.url         = obj['url']
@@ -147,12 +148,12 @@ class Board(object):
         self.name   = name
 
     def __repr__(self):
-        return '<Board %s>' % self.name
+        return '<Board>'
 
     def fetch(self):
         """Fetch all attributes for this board"""
         json_obj         = self.client.fetch_json('/boards/'+self.id)
-        self.name        = json_obj['name'].encode('utf-8')
+        self.name        = json_obj['name']
         self.desc        = json_obj['desc']
         self.closed      = json_obj['closed']
         self.url         = json_obj['url']
@@ -179,7 +180,7 @@ class Board(object):
                        query_params = {'cards': 'none', 'filter': list_filter})
         lists = list()
         for obj in json_obj:
-            l = List(self, obj['id'], name=obj['name'].encode('utf-8'))
+            l = List(self, obj['id'], name=obj['name'])
             l.closed = obj['closed']
             lists.append(l)
 
@@ -205,7 +206,7 @@ class Board(object):
         cards = list()
         for obj in json_obj:
             c = Card(self, obj['id'], 
-                     name=obj['name'].encode('utf-8'),
+                     name=obj['name'],
                      desc=obj['desc'],
                      url=obj['url'],
                      closed=obj['closed'],
@@ -231,12 +232,12 @@ class List(object):
         self.name   = name
 
     def __repr__(self):
-        return '<List %s>' % self.name
+        return '<List>'
 
     def fetch(self):
         """Fetch all attributes for this list"""
         json_obj    = self.client.fetch_json('/lists/'+self.id)
-        self.name   = json_obj['name'].encode('utf-8')
+        self.name   = json_obj['name']
         self.closed = json_obj['closed']
 
     def list_cards(self):
@@ -244,7 +245,7 @@ class List(object):
         json_obj = self.client.fetch_json('/lists/'+self.id+'/cards')
         cards = list()
         for c in json_obj:
-            card             = Card(self, c['id'], name=c['name'].encode('utf-8'))
+            card             = Card(self, c['id'], name=c['name'])
             card.desc        = c['desc']
             card.closed      = c['closed']
             card.url         = c['url']
@@ -264,7 +265,7 @@ class List(object):
                        post_args = {'name': name, 'idList': self.id, 'desc': desc},)
 
         card             = Card(self, json_obj['id'])
-        card.name        = json_obj['name'].encode('utf-8')
+        card.name        = json_obj['name']
         card.desc        = json_obj['desc']
         card.closed      = json_obj['closed']
         card.url         = json_obj['url']
@@ -292,7 +293,7 @@ class Card(object):
         self.closed      = closed
 
     def __repr__(self):
-        return '<Card %s>' % self.name
+        return '<Card>'
 
     def fetch(self):
         """Fetch all attributes for this card"""
@@ -300,7 +301,7 @@ class Card(object):
                        '/cards/'+self.id,
                        query_params = {'badges': False})
 
-        self.name        = json_obj['name'].encode('utf-8')
+        self.name        = json_obj['name']
         self.desc        = json_obj['desc']
         self.closed      = json_obj['closed']
         self.url         = json_obj['url']
