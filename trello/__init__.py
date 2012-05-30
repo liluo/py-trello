@@ -167,7 +167,6 @@ class Board(object):
                           query_params = {'fields': 'all'})
         members = []
         for obj in json_obj:
-            print obj
             member = Member(self, obj['id'])
             member.url = obj['url']
             member.status = obj['status']
@@ -178,6 +177,11 @@ class Board(object):
             member.avatar_hash = obj['avatarHash']
             members.append(member)
         return members
+
+    def member_avatars(self):
+        avatar_url = 'https://trello-avatars.s3.amazonaws.com/%s/30.png'
+        members = self.all_members()
+        return dict([(m.id, avatar_url % m.avatar_hash) for m in members])
         
     def all_lists(self):
         """Returns all lists on this board"""
