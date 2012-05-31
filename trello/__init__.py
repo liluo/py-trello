@@ -190,7 +190,7 @@ class Board(object):
             member.full_name = obj['fullName']
             member.board_ids = obj['idBoards']
             member.initials = obj['initials']
-            member.avatar_hash = obj['avatarHash']
+            member.avatar_hash = obj.get('avatarHash', '')
             members.append(member)
         return members
 
