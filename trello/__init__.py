@@ -87,6 +87,22 @@ class TrelloClient(object):
 
         return url
 
+    def get_board(self, board_id):
+        """
+        Get a Board
+        """
+        try:
+            json_obj = self.fetch_json('/boards/'+board_id)
+            board        = Board(self, json_obj['id'])
+            board.name   = json_obj['name']
+            board.desc   = json_obj['desc']
+            board.closed = json_obj['closed']
+            board.url    = json_obj['url']
+            return board
+        except ResourceUnavailable:
+            return None
+
+
     def list_boards(self):
         """
         Returns all boards for your Trello user
