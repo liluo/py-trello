@@ -95,7 +95,6 @@ class TrelloClient(object):
             json_obj = self.fetch_json('/boards/'+board_id)
             board        = Board(self, json_obj['id'])
             board.name   = json_obj['name']
-            board.desc   = json_obj['desc']
             board.closed = json_obj['closed']
             board.url    = json_obj['url']
             return board
@@ -120,7 +119,6 @@ class TrelloClient(object):
         for obj in json_obj:
             board        = Board(self, obj['id'])
             board.name   = obj['name']
-            board.desc   = obj['desc']
             board.closed = obj['closed']
             board.url    = obj['url']
             boards.append(board)
@@ -188,7 +186,6 @@ class Board(object):
             member.status = obj['status']
             member.username = obj['username']
             member.full_name = obj['fullName']
-            member.board_ids = obj['idBoards']
             member.initials = obj['initials']
             member.avatar_hash = obj.get('avatarHash', '')
             members.append(member)
